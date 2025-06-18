@@ -176,7 +176,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user, isFetc
             />
             <button
               type="submit"
-              className="w-full rounded-md bg-primary-10 hover:bg-[#244F5B] active:scale-95 px-4 py-2 text-white font-medium transition duration-300"
+              className="w-full rounded-md bg-primary-10 hover:bg-[#244F5B] active:scale-95 px-4 py-2 text-white font-medium transition duration-300 cursor-pointer"
             >
               Update User
             </button>
