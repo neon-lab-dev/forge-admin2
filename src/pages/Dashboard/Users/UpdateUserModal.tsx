@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { FiX } from "react-icons/fi";
 import type { TUser } from "../../../types/users.types";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
+import { toast } from "sonner";
 
 interface UpdateUserModalProps {
   userId: string;
@@ -18,49 +19,61 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   const {
     register,
     handleSubmit,
-    reset,
+    setValue,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: "",
-      email: "",
-      designation: "",
-      station: "",
-      role: "",
-      photo: null,
-    },
-  });
+  } = useForm();
 
   useEffect(() => {
     if (user) {
-      reset({
-        name: user.name,
-        email: user.email,
-        designation: user.designation || "",
-        station: user.station || "",
-        role: user.role || "",
-        photo: undefined,
-      });
+      setValue("name", user.name);
+      setValue("email", user.email);
+      setValue("designation", user.designation || "");
+      setValue("linkedInUrl", user.linkedInUrl || "");
+      setValue("writeUp", user.writeUp || "");
+      setValue("station", user.station || "");
+      setValue("role", user.role || "");
+      setValue("photo", user?.photo?.url || "");
     }
-  }, [user, reset]);
+  }, [user, setValue]);
 
-  const onSubmit = (data: any) => {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("email", data.email);
-    formData.append("designation", data.designation);
-    formData.append("station", data.station);
-    formData.append("role", data.role);
+  const handleUpdateUser = async (userId: string, formData: FormData) => {
+  const toastId = toast.loading("Updating user...");
 
-    if (data.photo && data.photo[0]) {
-      formData.append("photo", data.photo[0]);
-    }
+  try {
+    const res = await fetch(`https://admin-delta-rosy.vercel.app/api/user/${userId}`, {
+      method: "PUT",
+      body: formData,
+    });
 
-    // onUpdate(formData);
-    onClose();
-  };
+    if (!res.ok) throw new Error("Failed to update user");
 
-  console.log(user);
+    toast.success("User updated successfully", { id: toastId });
+  } catch (error) {
+    toast.error("Something went wrong!", { id: toastId });
+    console.error("Update Error:", error);
+  }
+};
+
+
+  const onSubmit = async (data: any) => {
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("email", data.email);
+  formData.append("designation", data.designation);
+  formData.append("linkedInUrl", data.linkedInUrl);
+  formData.append("writeUp", data.writeUp);
+  formData.append("station", data.station);
+  formData.append("role", data.role);
+
+  if (data.file && data.file[0]) {
+    formData.append("file", data.file[0]);
+  }
+
+  await handleUpdateUser(user?.id || "", formData);
+  onClose();
+//   window.location.reload();
+};
+
 
   return (
     <div
@@ -107,7 +120,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               <input
                 type="file"
                 accept="image/*"
-                {...register("photo")}
+                {...register("file")}
                 className="w-full text-sm file:mr-4 file:py-2 file:px-4
                file:rounded-md file:border-0 file:text-sm file:font-semibold
                file:bg-primary-10 file:text-white hover:file:bg-[#244F5B]"
@@ -131,6 +144,18 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               placeholder="Enter your designation"
               {...register("designation")}
               error={errors.designation}
+            />
+            <TextInput
+              label="LinkedIn Url"
+              placeholder="Enter your linkedIn profile url"
+              {...register("linkedInUrl")}
+              error={errors.linkedInUrl}
+            />
+            <TextInput
+              label="writeUp"
+              placeholder="Enter your writeUp"
+              {...register("writeUp")}
+              error={errors.writeUp}
             />
             <TextInput
               label="Station"
