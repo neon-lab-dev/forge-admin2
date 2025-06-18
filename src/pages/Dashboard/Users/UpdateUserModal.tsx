@@ -5,6 +5,7 @@ import { FiX } from "react-icons/fi";
 import type { TUser } from "../../../types/users.types";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
 import { toast } from "sonner";
+import SelectDropdown from "../../../components/Reusable/SelectDropdown/SelectDropdown";
 
 interface UpdateUserModalProps {
   userId: string;
@@ -12,10 +13,7 @@ interface UpdateUserModalProps {
   user: TUser | null;
 }
 
-const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
-  onClose,
-  user,
-}) => {
+const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user }) => {
   const {
     register,
     handleSubmit,
@@ -37,43 +35,44 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   }, [user, setValue]);
 
   const handleUpdateUser = async (userId: string, formData: FormData) => {
-  const toastId = toast.loading("Updating user...");
+    const toastId = toast.loading("Updating user...");
 
-  try {
-    const res = await fetch(`https://admin-delta-rosy.vercel.app/api/user/${userId}`, {
-      method: "PUT",
-      body: formData,
-    });
+    try {
+      const res = await fetch(
+        `https://admin-delta-rosy.vercel.app/api/user/${userId}`,
+        {
+          method: "PUT",
+          body: formData,
+        }
+      );
 
-    if (!res.ok) throw new Error("Failed to update user");
+      if (!res.ok) throw new Error("Failed to update user");
 
-    toast.success("User updated successfully", { id: toastId });
-  } catch (error) {
-    toast.error("Something went wrong!", { id: toastId });
-    console.error("Update Error:", error);
-  }
-};
-
+      toast.success("User updated successfully", { id: toastId });
+    } catch (error) {
+      toast.error("Something went wrong!", { id: toastId });
+      console.error("Update Error:", error);
+    }
+  };
 
   const onSubmit = async (data: any) => {
-  const formData = new FormData();
-  formData.append("name", data.name);
-  formData.append("email", data.email);
-  formData.append("designation", data.designation);
-  formData.append("linkedInUrl", data.linkedInUrl);
-  formData.append("writeUp", data.writeUp);
-  formData.append("station", data.station);
-  formData.append("role", data.role);
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("designation", data.designation);
+    formData.append("linkedInUrl", data.linkedInUrl);
+    formData.append("writeUp", data.writeUp);
+    formData.append("station", data.station);
+    formData.append("role", data.role);
 
-  if (data.file && data.file[0]) {
-    formData.append("file", data.file[0]);
-  }
+    if (data.file && data.file[0]) {
+      formData.append("file", data.file[0]);
+    }
 
-  await handleUpdateUser(user?.id || "", formData);
-  onClose();
-//   window.location.reload();
-};
-
+    await handleUpdateUser(user?.id || "", formData);
+    onClose();
+    window.location.reload();
+  };
 
   return (
     <div
@@ -163,11 +162,11 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               {...register("station")}
               error={errors.station}
             />
-            <TextInput
+            <SelectDropdown
               label="Role"
-              placeholder="Enter user role"
               {...register("role")}
-              error={errors.role}
+              error={errors?.role}
+              options={["USER", "ADMIN"]}
             />
             <button
               type="submit"
