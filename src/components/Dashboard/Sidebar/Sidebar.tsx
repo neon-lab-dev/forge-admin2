@@ -23,7 +23,7 @@ const Sidebar = () => {
     <div
       className={`${
         isOpen ? "w-[260px]" : "w-[60px]"
-      } h-screen sticky top-0 transition-all duration-300 bg-primary-10 text-white shadow-lg flex flex-col`}
+      } sticky top-0 transition-all duration-300 bg-primary-10 text-white shadow-lg flex flex-col min-h-screen h-full`}
     >
       {/* Toggle Button */}
       <button
