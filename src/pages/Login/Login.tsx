@@ -49,7 +49,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-white via-gray-100 to-gray-200 w-full">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-white via-gray-100 to-gray-200 w-full p-4">
       <div className="mx-auto w-full max-w-md space-y-6 rounded-xl border border-primary-10/30 bg-white/70 backdrop-blur-lg p-8 shadow-xl">
         <h1 className="text-4xl font-bold text-primary-10 text-center">
           Welcome Back

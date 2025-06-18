@@ -3,14 +3,32 @@ import { useForm } from "react-hook-form";
 import { FiMoreVertical, FiTrash2, FiEdit2 } from "react-icons/fi";
 import type { TUser } from "../../../types/users.types";
 import { toast } from "sonner";
+import UpdateUserModal from "./UpdateUserModal";
 
 const Users = () => {
   const { register, watch } = useForm({ defaultValues: { search: "" } });
   const searchTerm = watch("search");
-  
+
   const [users, setUsers] = useState<TUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<TUser | null>(null);
+
+  const fetchUserById = async (userId: string) => {
+    try {
+      const res = await fetch(
+        `https://admin-delta-rosy.vercel.app/api/user/${userId}`
+      );
+      const data = await res.json();
+      setSelectedUser(data?.data);
+      setIsModalOpen(true);
+    } catch (err) {
+      console.error("Failed to fetch user by ID:", err);
+      toast.error("Failed to fetch user data");
+    }
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -29,25 +47,27 @@ const Users = () => {
   }, []);
 
   const deleteUser = async (userId: string) => {
-  const toastId = toast.loading("Deleting user...");
+    const toastId = toast.loading("Deleting user...");
 
-  try {
-    const res = await fetch(`https://admin-delta-rosy.vercel.app/api/user/${userId}`, {
-      method: "DELETE",
-    });
+    try {
+      const res = await fetch(
+        `https://admin-delta-rosy.vercel.app/api/user/${userId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-    if (!res.ok) {
-      throw new Error("Failed to delete user");
+      if (!res.ok) {
+        throw new Error("Failed to delete user");
+      }
+
+      toast.success("User deleted successfully", { id: toastId });
+      window.location.reload();
+    } catch (error) {
+      toast.error("Something went wrong", { id: toastId });
+      console.error(error);
     }
-
-    toast.success("User deleted successfully", { id: toastId });
-    window.location.reload();
-
-  } catch (error) {
-    toast.error("Something went wrong", { id: toastId });
-    console.error(error);
-  }
-};
+  };
 
   const filteredUsers = users.filter((user) => {
     const term = searchTerm.toLowerCase();
@@ -57,7 +77,7 @@ const Users = () => {
     );
   });
 
-  const toggleDropdown = (id:string) =>
+  const toggleDropdown = (id: string) =>
     setDropdownOpen((prev) => (prev === id ? null : id));
 
   return (
@@ -133,7 +153,7 @@ const Users = () => {
                     <td className="relative px-4 py-3 text-sm border-b border-gray-200">
                       <button
                         onClick={() => toggleDropdown(user?.id)}
-                        className="flex items-center p-1 rounded hover:bg-gray-200 transition"
+                        className="flex items-center p-1 rounded hover:bg-gray-200 transition cursor-pointer"
                         aria-label="Open actions menu"
                       >
                         <FiMoreVertical size={20} />
@@ -149,26 +169,30 @@ const Users = () => {
                             <li>
                               <button
                                 className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                onClick={() =>
-                                  alert(`Edit user ${user.name} details`)
-                                }
+                                onClick={() => {
+                                  setSelectedUserId(user.id);
+                                  fetchUserById(user.id);
+                                  setIsModalOpen(true);
+                                  setDropdownOpen(null);
+                                }}
                               >
                                 <FiEdit2 className="mr-2" /> Update
                               </button>
                             </li>
                             <li>
                               <button
-  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-  onClick={() => {
-    const confirmDelete = confirm(`Are you sure you want to delete ${user.name}?`);
-    if (confirmDelete) {
-      deleteUser(user?.id || "");
-    }
-  }}
->
-  <FiTrash2 className="mr-2" /> Delete
-</button>
-
+                                className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                                onClick={() => {
+                                  const confirmDelete = confirm(
+                                    `Are you sure you want to delete ${user.name}?`
+                                  );
+                                  if (confirmDelete) {
+                                    deleteUser(user?.id || "");
+                                  }
+                                }}
+                              >
+                                <FiTrash2 className="mr-2" /> Delete
+                              </button>
                             </li>
                           </ul>
                         </div>
@@ -208,6 +232,14 @@ const Users = () => {
           }
         `}
       </style>
+
+      {isModalOpen && selectedUserId && (
+        <UpdateUserModal
+          userId={selectedUserId}
+          onClose={() => setIsModalOpen(false)}
+          user={selectedUser}
+        />
+      )}
     </div>
   );
 };
