@@ -27,12 +27,13 @@ const Login = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "https://forge-backend-self.vercel.app/api/v1/auth/login",
+        "https://admin-delta-rosy.vercel.app/api/auth/login",
         data,
         { withCredentials: true }
       );
-      if (response.data.success) {
-        Cookies.set("isAuthenticated", "true", { expires: 7 });
+      console.log(response);
+      if (response?.data?.success) {
+        Cookies.set("accessToken",response?.data?.data?.accessToken, { expires: 2 });
         navigate("/dashboard");
       } else {
         toast.error("Invalid credentials");
@@ -47,11 +48,11 @@ const Login = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-white via-gray-100 to-gray-200 w-full">
-      <div className="mx-auto w-full max-w-md space-y-6 rounded-xl border border-[#2B6473]/30 bg-white/70 backdrop-blur-lg p-8 shadow-xl">
-        <h1 className="text-4xl font-bold text-[#2B6473] text-center">
+      <div className="mx-auto w-full max-w-md space-y-6 rounded-xl border border-primary-10/30 bg-white/70 backdrop-blur-lg p-8 shadow-xl">
+        <h1 className="text-4xl font-bold text-primary-10 text-center">
           Welcome Back
         </h1>
-        <p className="text-center text-sm text-[#2B6473]/70">
+        <p className="text-center text-sm text-primary-10/70">
           Please login to your account
         </p>
 
@@ -72,7 +73,7 @@ const Login = () => {
                   message: "Enter a valid email",
                 },
               })}
-              className="flex h-11 w-full rounded-md border border-[#2B6473]/30 bg-white px-4 py-2 text-sm text-gray-700 shadow-sm transition-transform focus:scale-[1.02] focus:ring-2 focus:ring-[#2B6473] focus:outline-none"
+              className="flex h-11 w-full rounded-md border border-primary-10/30 bg-white px-4 py-2 text-sm text-gray-700 shadow-sm transition-transform focus:scale-[1.02] focus:ring-2 focus:ring-primary-10 focus:outline-none"
             />
             {errors.email && (
               <p className="text-red-500 text-xs">{errors.email.message}</p>
@@ -99,11 +100,11 @@ const Login = () => {
                     message: "Password must be at least 6 characters",
                   },
                 })}
-                className="flex h-11 w-full rounded-md border border-[#2B6473]/30 bg-white px-4 py-2 pr-10 text-sm text-gray-700 shadow-sm transition-transform focus:scale-[1.02] focus:ring-2 focus:ring-[#2B6473] focus:outline-none"
+                className="flex h-11 w-full rounded-md border border-primary-10/30 bg-white px-4 py-2 pr-10 text-sm text-gray-700 shadow-sm transition-transform focus:scale-[1.02] focus:ring-2 focus:ring-primary-10 focus:outline-none"
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
                 onClick={() => setShowPassword((prev) => !prev)}
               >
                 {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
@@ -117,10 +118,10 @@ const Login = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className={`w-full rounded-md px-4 py-2 font-medium text-white transition-all duration-300 ${
+            className={`w-full rounded-md px-4 py-2 font-medium text-white transition-all duration-300 cursor-pointer ${
               isLoading
-                ? "bg-[#2B6473]/60 cursor-not-allowed"
-                : "bg-[#2B6473] hover:bg-[#244F5B] active:scale-95"
+                ? "bg-primary-10/60 cursor-not-allowed"
+                : "bg-primary-10 hover:bg-[#244F5B] active:scale-95"
             }`}
             disabled={isLoading}
           >

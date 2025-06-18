@@ -3,6 +3,8 @@ import Layout from "../layout/Layout";
 import Login from "../pages/Login/Login";
 import ProtectedRoute from './ProtectedRoute';
 import Dashboard from "../pages/Dashboard/Dashboard";
+import DashboardLayout from "../layout/DashboardLayout";
+import Users from "../pages/Dashboard/Users/Users";
 
 export const router = createBrowserRouter([
   {
@@ -13,10 +15,20 @@ export const router = createBrowserRouter([
         path: "/",
         element: <Login />,
       },
+    ],
+  },
+  {
+    path: "dashboard",
+    element: <ProtectedRoute><DashboardLayout /></ProtectedRoute>,
+    children: [
       {
-        path: "/dashboard",
-        element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
+        path: "",
+        element:<Dashboard />,
+      },
+      {
+        path: "users",
+        element:<Users />,
       },
     ],
-  }
+  },
 ]);

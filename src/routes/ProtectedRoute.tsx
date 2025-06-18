@@ -1,9 +1,10 @@
 import { Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 const ProtectedRoute = ({ children }:{children:ReactNode}) => {
-  if (Cookies.get("isAuthenticated") !== "true") {
+  const accessToken = Cookies.get("accessToken");
+  if (!accessToken) {
     return <Navigate to="/" />;
   }
 
