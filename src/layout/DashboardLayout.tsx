@@ -8,7 +8,9 @@ const DashboardLayout = () => {
       <Sidebar />
       <div className="w-full">
         <Header/>
-        <Outlet/>
+        <div className="px-6 py-4">
+            <Outlet/>
+        </div>
       </div>
     </div>
   );
