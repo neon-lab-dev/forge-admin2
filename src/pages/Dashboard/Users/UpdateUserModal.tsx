@@ -6,18 +6,21 @@ import type { TUser } from "../../../types/users.types";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
 import { toast } from "sonner";
 import SelectDropdown from "../../../components/Reusable/SelectDropdown/SelectDropdown";
+import Loader from "../../../components/Reusable/Loader/Loader";
 
 interface UpdateUserModalProps {
   userId: string;
   onClose: () => void;
   user: TUser | null;
+  isFetchingUserById: boolean;
 }
 
-const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user }) => {
+const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user, isFetchingUserById }) => {
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -79,12 +82,12 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user }) => {
       className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center animate-fadeIn"
       onClick={onClose}
     >
-      {!user ? (
+      {isFetchingUserById || !user ? (
         <div
-          className="bg-white w-full max-w-md rounded-lg shadow-lg p-6 text-center animate-scaleIn"
+          className="bg-white w-full max-w-md rounded-lg shadow-lg p-6 text-center animate-scaleIn h-[450px] md:h-[600px] flex items-center justify-center"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="text-gray-600">Loading user data...</div>
+         <Loader size={40} />
         </div>
       ) : (
         <div
@@ -92,7 +95,10 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user }) => {
           onClick={(e) => e.stopPropagation()}
         >
           <button
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              reset();
+            }}
             className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 cursor-pointer"
           >
             <FiX size={20} />

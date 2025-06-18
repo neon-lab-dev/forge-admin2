@@ -8,15 +8,17 @@ import UpdateUserModal from "./UpdateUserModal";
 const Users = () => {
   const { register, watch } = useForm({ defaultValues: { search: "" } });
   const searchTerm = watch("search");
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const dropdownRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const [users, setUsers] = useState<TUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isFetchingUserById, setIsFetchingUserById] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<TUser | null>(null);
 
   const fetchUserById = async (userId: string) => {
+    setIsFetchingUserById(true);
     try {
       const res = await fetch(
         `https://admin-delta-rosy.vercel.app/api/user/${userId}`
@@ -24,9 +26,12 @@ const Users = () => {
       const data = await res.json();
       setSelectedUser(data?.data);
       setIsModalOpen(true);
+      setIsFetchingUserById(false);
     } catch (err) {
       console.error("Failed to fetch user by ID:", err);
       toast.error("Failed to fetch user data");
+    } finally {
+      setIsFetchingUserById(false);
     }
   };
 
@@ -83,8 +88,9 @@ const Users = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        dropdownOpen &&
+        dropdownRefs.current.has(dropdownOpen) &&
+        !dropdownRefs.current.get(dropdownOpen)?.contains(event.target as Node)
       ) {
         setDropdownOpen(null);
       }
@@ -94,7 +100,7 @@ const Users = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [dropdownOpen]);
 
   return (
     <div className="p-4 max-w-full">
@@ -168,7 +174,11 @@ const Users = () => {
                     </td>
                     <td className="relative px-4 py-3 text-sm border-b border-gray-200">
                       <div
-                        ref={dropdownRef}
+                        ref={(el) => {
+                          if (el && user.id) {
+                            dropdownRefs.current.set(user.id, el);
+                          }
+                        }}
                         className="relative inline-block text-left"
                       >
                         <button
@@ -184,7 +194,7 @@ const Users = () => {
                             <ul>
                               <li>
                                 <button
-                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                                   onClick={() => {
                                     setSelectedUserId(user.id);
                                     fetchUserById(user.id);
@@ -197,7 +207,7 @@ const Users = () => {
                               </li>
                               <li>
                                 <button
-                                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
                                   onClick={() => {
                                     const confirmDelete = confirm(
                                       `Are you sure you want to delete ${user.name}?`
@@ -254,6 +264,7 @@ const Users = () => {
           userId={selectedUserId}
           onClose={() => setIsModalOpen(false)}
           user={selectedUser}
+          isFetchingUserById={isFetchingUserById}
         />
       )}
     </div>
