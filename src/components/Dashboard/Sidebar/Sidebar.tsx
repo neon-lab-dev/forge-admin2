@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { FiChevronLeft, FiChevronRight, FiUsers, FiBox } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiUsers } from "react-icons/fi";
 
 const links = [
   {
@@ -8,11 +8,11 @@ const links = [
     path: "/dashboard/users",
     icon: <FiUsers size={18} />,
   },
-  {
-    name: "Products",
-    path: "/dashboard/products",
-    icon: <FiBox size={18} />,
-  },
+//   {
+//     name: "Products",
+//     path: "/dashboard/products",
+//     icon: <FiBox size={18} />,
+//   },
 ];
 
 const Sidebar = () => {
