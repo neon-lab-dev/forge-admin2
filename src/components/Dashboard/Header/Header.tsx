@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const Header = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -12,21 +14,23 @@ const Header = () => {
         return "Manage Users";
       case "/dashboard/products":
         return "Manage Products";
-      // add more cases as needed
       default:
         return "Dashboard";
     }
   };
 
   const handleLogout = () => {
-    setIsLoading(true);
-    // simulate async logout
+  setIsLoading(true);
+  setTimeout(() => {
+    setIsLoading(false);
+    Cookies.remove("accessToken");
+    navigate("/", { replace: true });
     setTimeout(() => {
-      setIsLoading(false);
-      // TODO: add actual logout logic here (e.g. clearing auth tokens, redirect)
-      alert("Logged out");
-    }, 1500);
-  };
+      window.location.reload();
+    }, 100);
+  }, 1500);
+};
+
 
   return (
     <div className="flex justify-between items-center px-6 py-4 bg-white shadow w-full">

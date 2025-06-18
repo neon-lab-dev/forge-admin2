@@ -33,8 +33,10 @@ const Login = () => {
       );
       console.log(response);
       if (response?.data?.success) {
-        Cookies.set("accessToken",response?.data?.data?.accessToken, { expires: 2 });
-        navigate("/dashboard");
+        Cookies.set("accessToken", response?.data?.data?.accessToken, {
+          expires: 2,
+        });
+        navigate("/dashboard/users");
       } else {
         toast.error("Invalid credentials");
       }
