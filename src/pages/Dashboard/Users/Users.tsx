@@ -4,6 +4,7 @@ import { FiMoreVertical, FiTrash2, FiEdit2 } from "react-icons/fi";
 import type { TUser } from "../../../types/users.types";
 import { toast } from "sonner";
 import UpdateUserModal from "./UpdateUserModal";
+import Loader from "../../../components/Reusable/Loader/Loader";
 
 const Users = () => {
   const { register, watch } = useForm({ defaultValues: { search: "" } });
@@ -114,151 +115,154 @@ const Users = () => {
         />
       </div>
 
-      {loading ? (
-        <div className="text-center text-gray-600">Loading users...</div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full table-auto">
-            <thead>
-              <tr className="bg-gray-50">
-                {[
-                  "Sl",
-                  "Image",
-                  "Name",
-                  "Email",
-                  "Designation",
-                  "Station",
-                  "Role",
-                  "Action",
-                ].map((h) => (
-                  <th
-                    key={h}
-                    className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-200"
-                  >
-                    {h}
-                  </th>
-                ))}
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto">
+          <thead>
+            <tr className="bg-gray-50">
+              {[
+                "Sl",
+                "Image",
+                "Name",
+                "Email",
+                "Designation",
+                "Station",
+                "Role",
+                "Action",
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-200"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={8}>
+                  <div className="flex justify-center items-center gap-3 py-6">
+                    <Loader size={25} />
+                    <p className="text-gray-800">Please wait...</p>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user, idx) => (
-                  <tr
-                    key={user.id || idx}
-                    className="hover:bg-gray-50 even:bg-white relative"
-                  >
-                    <td className="px-4 py-3 text-sm text-gray-700 border-b border-gray-200">
-                      {idx + 1}
-                    </td>
-                    <td className="px-4 py-3 border-b border-gray-200">
-                      <img
-                        src={user?.photo?.url}
-                        alt={user.name}
-                        className="h-10 w-10 rounded-full object-cover"
-                      />
-                    </td>
-                    <td className="px-4 py-3 text-sm font-medium text-gray-800 border-b border-gray-200">
-                      {user.name}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
-                      {user.email}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
-                      {user.designation || "-"}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
-                      {user.station || "-"}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
-                      {user.role || "-"}
-                    </td>
-                    <td className="relative px-4 py-3 text-sm border-b border-gray-200">
-                      <div
-                        ref={(el) => {
-                          if (el && user.id) {
-                            dropdownRefs.current.set(user.id, el);
-                          }
-                        }}
-                        className="relative inline-block text-left"
+            ) : filteredUsers.length > 0 ? (
+              filteredUsers.map((user, idx) => (
+                <tr
+                  key={user.id || idx}
+                  className="hover:bg-gray-50 even:bg-white relative"
+                >
+                  <td className="px-4 py-3 text-sm text-gray-700 border-b border-gray-200">
+                    {idx + 1}
+                  </td>
+                  <td className="px-4 py-3 border-b border-gray-200">
+                    <img
+                      src={user?.photo?.url}
+                      alt={user.name}
+                      className="h-10 w-10 rounded-full object-cover"
+                    />
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium text-gray-800 border-b border-gray-200">
+                    {user.name}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
+                    {user.email}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
+                    {user.designation || "-"}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
+                    {user.station || "-"}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
+                    {user.role || "-"}
+                  </td>
+                  <td className="relative px-4 py-3 text-sm border-b border-gray-200">
+                    <div
+                      ref={(el) => {
+                        if (el && user.id) {
+                          dropdownRefs.current.set(user.id, el);
+                        }
+                      }}
+                      className="relative inline-block text-left"
+                    >
+                      <button
+                        onClick={() => toggleDropdown(user?.id)}
+                        className="flex items-center p-1 rounded hover:bg-gray-200 transition cursor-pointer"
+                        aria-label="Open actions menu"
                       >
-                        <button
-                          onClick={() => toggleDropdown(user?.id)}
-                          className="flex items-center p-1 rounded hover:bg-gray-200 transition cursor-pointer"
-                          aria-label="Open actions menu"
-                        >
-                          <FiMoreVertical size={20} />
-                        </button>
+                        <FiMoreVertical size={20} />
+                      </button>
 
-                        {dropdownOpen === user.id && (
-                          <div className="absolute right-6 bottom-0 mb-2 w-40 rounded-md bg-white shadow-lg border border-gray-200 z-50 animate-fadeUp">
-                            <ul>
-                              <li>
-                                <button
-                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                                  onClick={() => {
-                                    setSelectedUserId(user.id);
-                                    fetchUserById(user.id);
-                                    setIsModalOpen(true);
-                                    setDropdownOpen(null);
-                                  }}
-                                >
-                                  <FiEdit2 className="mr-2" /> Update
-                                </button>
-                              </li>
-                              <li>
-                                <button
-                                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
-                                  onClick={() => {
-                                    const confirmDelete = confirm(
-                                      `Are you sure you want to delete ${user.name}?`
-                                    );
-                                    if (confirmDelete) {
-                                      deleteUser(user?.id || "");
-                                    }
-                                  }}
-                                >
-                                  <FiTrash2 className="mr-2" /> Delete
-                                </button>
-                              </li>
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="px-4 py-6 text-center text-gray-500"
-                  >
-                    No users found
+                      {dropdownOpen === user.id && (
+                        <div className="absolute right-6 bottom-0 mb-2 w-40 rounded-md bg-white shadow-lg border border-gray-200 z-50 animate-fadeUp">
+                          <ul>
+                            <li>
+                              <button
+                                className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                                onClick={() => {
+                                  setSelectedUserId(user.id);
+                                  fetchUserById(user.id);
+                                  setIsModalOpen(true);
+                                  setDropdownOpen(null);
+                                }}
+                              >
+                                <FiEdit2 className="mr-2" /> Update
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+                                onClick={() => {
+                                  const confirmDelete = confirm(
+                                    `Are you sure you want to delete ${user.name}?`
+                                  );
+                                  if (confirmDelete) {
+                                    deleteUser(user?.id || "");
+                                  }
+                                }}
+                              >
+                                <FiTrash2 className="mr-2" /> Delete
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+              ))
+            ) : (
+              <tr>
+                <td colSpan={8} className="px-4 py-6 text-center text-gray-500">
+                  No users found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       <style>
         {`
-      @keyframes fadeUp {
-        0% {
-          opacity: 0;
-          transform: translateY(10%);
+        @keyframes fadeUp {
+          0% {
+            opacity: 0;
+            transform: translateY(10%);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
+        .animate-fadeUp {
+          animation: fadeUp 0.2s ease forwards;
         }
-      }
-      .animate-fadeUp {
-        animation: fadeUp 0.2s ease forwards;
-      }
-    `}
+      `}
       </style>
+
       {isModalOpen && selectedUserId && (
         <UpdateUserModal
           userId={selectedUserId}
