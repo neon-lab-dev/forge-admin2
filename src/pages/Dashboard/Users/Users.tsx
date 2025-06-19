@@ -146,6 +146,7 @@ const Users = () => {
                 "Image",
                 "Name",
                 "Email",
+                "Linkedin URL",
                 "Designation",
                 "Station",
                 "Role",
@@ -192,6 +193,20 @@ const Users = () => {
                   <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
                     {user?.email}
                   </td>
+                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
+                    <a
+                      href={
+                        user?.linkedInUrl?.startsWith("http")
+                          ? user.linkedInUrl
+                          : `https://${user?.linkedInUrl}`
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {user?.linkedInUrl}
+                    </a>
+                  </td>
+
                   <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
                     {user?.designation || "-"}
                   </td>

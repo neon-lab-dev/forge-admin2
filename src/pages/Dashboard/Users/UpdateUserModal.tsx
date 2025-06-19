@@ -161,8 +161,8 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user, isFetc
               error={errors.linkedInUrl}
             />
             <TextInput
-              label="writeUp"
-              placeholder="Enter your writeUp"
+              label="Bio"
+              placeholder="Enter your bio"
               {...register("writeUp")}
               error={errors.writeUp}
             />
