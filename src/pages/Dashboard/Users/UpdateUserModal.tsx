@@ -7,6 +7,8 @@ import TextInput from "../../../components/Reusable/TextInput/TextInput";
 import { toast } from "sonner";
 import SelectDropdown from "../../../components/Reusable/SelectDropdown/SelectDropdown";
 import Loader from "../../../components/Reusable/Loader/Loader";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 interface UpdateUserModalProps {
   userId: string;
@@ -38,25 +40,27 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user, isFetc
   }, [user, setValue]);
 
   const handleUpdateUser = async (userId: string, formData: FormData) => {
-    const toastId = toast.loading("Updating user...");
+  const toastId = toast.loading("Updating user...");
+  const token = Cookies.get("accessToken");
 
-    try {
-      const res = await fetch(
-        `https://admin-delta-rosy.vercel.app/api/user/${userId}`,
-        {
-          method: "PUT",
-          body: formData,
-        }
-      );
+  try {
+    await axios.put(
+      `https://admin-delta-rosy.vercel.app/api/user/${userId}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
 
-      if (!res.ok) throw new Error("Failed to update user");
-
-      toast.success("User updated successfully", { id: toastId });
-    } catch (error) {
-      toast.error("Something went wrong!", { id: toastId });
-      console.error("Update Error:", error);
-    }
-  };
+    toast.success("User updated successfully", { id: toastId });
+  } catch (error) {
+    toast.error("Something went wrong!", { id: toastId });
+    console.error("Update Error:", error);
+  }
+};
 
   const onSubmit = async (data: any) => {
     const formData = new FormData();

@@ -4,7 +4,9 @@ import { FiMoreVertical, FiTrash2, FiEdit2 } from "react-icons/fi";
 import type { TUser } from "../../../types/users.types";
 import { toast } from "sonner";
 import UpdateUserModal from "./UpdateUserModal";
+import Cookies from "js-cookie";
 import Loader from "../../../components/Reusable/Loader/Loader";
+import axios from "axios";
 
 const Users = () => {
   const { register, watch } = useForm({ defaultValues: { search: "" } });
@@ -17,17 +19,24 @@ const Users = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<TUser | null>(null);
+  const token = Cookies.get("accessToken");
 
+  // Fetch user by ID
   const fetchUserById = async (userId: string) => {
     setIsFetchingUserById(true);
+
     try {
-      const res = await fetch(
-        `https://admin-delta-rosy.vercel.app/api/user/${userId}`
+      const res = await axios.get(
+        `https://admin-delta-rosy.vercel.app/api/user/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
-      const data = await res.json();
-      setSelectedUser(data?.data);
+      setSelectedUser(res.data?.data);
       setIsModalOpen(true);
-      setIsFetchingUserById(false);
     } catch (err) {
       console.error("Failed to fetch user by ID:", err);
       toast.error("Failed to fetch user data");
@@ -36,21 +45,29 @@ const Users = () => {
     }
   };
 
+  // Fetch all users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("https://admin-delta-rosy.vercel.app/api/user");
-        const data = await res.json();
-        console.log(data);
-        setUsers(data?.data);
+        const res = await axios.get(
+          "https://admin-delta-rosy.vercel.app/api/user",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        setUsers(res.data?.data);
       } catch (err) {
         console.error("Failed to fetch users:", err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchUsers();
-  }, []);
+  }, [token]);
 
   const deleteUser = async (userId: string) => {
     const toastId = toast.loading("Deleting user...");
@@ -60,6 +77,11 @@ const Users = () => {
         `https://admin-delta-rosy.vercel.app/api/user/${userId}`,
         {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
         }
       );
 
@@ -75,11 +97,11 @@ const Users = () => {
     }
   };
 
-  const filteredUsers = users.filter((user) => {
+  const filteredUsers = users?.filter((user) => {
     const term = searchTerm.toLowerCase();
     return (
-      user.name?.toLowerCase().includes(term) ||
-      user.email?.toLowerCase().includes(term)
+      user?.name?.toLowerCase().includes(term) ||
+      user?.email?.toLowerCase().includes(term)
     );
   });
 
@@ -148,8 +170,8 @@ const Users = () => {
                   </div>
                 </td>
               </tr>
-            ) : filteredUsers.length > 0 ? (
-              filteredUsers.map((user, idx) => (
+            ) : filteredUsers?.length > 0 ? (
+              filteredUsers?.map((user, idx) => (
                 <tr
                   key={user.id || idx}
                   className="hover:bg-gray-50 even:bg-white relative"
@@ -160,30 +182,30 @@ const Users = () => {
                   <td className="px-4 py-3 border-b border-gray-200">
                     <img
                       src={user?.photo?.url}
-                      alt={user.name}
+                      alt={user?.name}
                       className="h-10 w-10 rounded-full object-cover"
                     />
                   </td>
                   <td className="px-4 py-3 text-sm font-medium text-gray-800 border-b border-gray-200">
-                    {user.name}
+                    {user?.name}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
-                    {user.email}
+                    {user?.email}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
-                    {user.designation || "-"}
+                    {user?.designation || "-"}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
-                    {user.station || "-"}
+                    {user?.station || "-"}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
-                    {user.role || "-"}
+                    {user?.role || "-"}
                   </td>
                   <td className="relative px-4 py-3 text-sm border-b border-gray-200">
                     <div
                       ref={(el) => {
-                        if (el && user.id) {
-                          dropdownRefs.current.set(user.id, el);
+                        if (el && user?.id) {
+                          dropdownRefs.current.set(user?.id, el);
                         }
                       }}
                       className="relative inline-block text-left"
@@ -196,15 +218,15 @@ const Users = () => {
                         <FiMoreVertical size={20} />
                       </button>
 
-                      {dropdownOpen === user.id && (
+                      {dropdownOpen === user?.id && (
                         <div className="absolute right-6 bottom-0 mb-2 w-40 rounded-md bg-white shadow-lg border border-gray-200 z-50 animate-fadeUp">
                           <ul>
                             <li>
                               <button
                                 className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                                 onClick={() => {
-                                  setSelectedUserId(user.id);
-                                  fetchUserById(user.id);
+                                  setSelectedUserId(user?.id);
+                                  fetchUserById(user?.id);
                                   setIsModalOpen(true);
                                   setDropdownOpen(null);
                                 }}
