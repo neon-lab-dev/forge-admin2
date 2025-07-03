@@ -77,7 +77,7 @@ const Users = () => {
 
     try {
       const res = await fetch(
-        `https://admin-delta-rosy.vercel.app/api/prople/${userId}`,
+        `https://admin-delta-rosy.vercel.app/api/people/${userId}`,
         {
           method: "DELETE",
           headers: {
