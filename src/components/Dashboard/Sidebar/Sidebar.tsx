@@ -4,7 +4,7 @@ import { FiChevronLeft, FiChevronRight, FiUsers } from "react-icons/fi";
 
 const links = [
   {
-    name: "Users",
+    name: "Peoples",
     path: "/dashboard/users",
     icon: <FiUsers size={18} />,
   },

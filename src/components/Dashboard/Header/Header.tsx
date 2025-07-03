@@ -11,7 +11,7 @@ const Header = () => {
   const getPageTitle = () => {
     switch (location.pathname) {
       case "/dashboard/users":
-        return "Manage Users";
+        return "Manage People";
       case "/dashboard/products":
         return "Manage Products";
       default:
