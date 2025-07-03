@@ -7,6 +7,7 @@ import UpdateUserModal from "./UpdateUserModal";
 import Cookies from "js-cookie";
 import Loader from "../../../components/Reusable/Loader/Loader";
 import axios from "axios";
+import AddPeopleModal from "./AddPeopleModal";
 
 const Users = () => {
   const { register, watch } = useForm({ defaultValues: { search: "" } });
@@ -18,6 +19,7 @@ const Users = () => {
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddPeopleModalOpen, setIsAddPeopleModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<TUser | null>(null);
   const token = Cookies.get("accessToken");
 
@@ -27,7 +29,7 @@ const Users = () => {
 
     try {
       const res = await axios.get(
-        `https://admin-delta-rosy.vercel.app/api/user/${userId}`,
+        `https://admin-delta-rosy.vercel.app/api/people/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -40,6 +42,7 @@ const Users = () => {
     } catch (err) {
       console.error("Failed to fetch user by ID:", err);
       toast.error("Failed to fetch user data");
+      setIsModalOpen(false);
     } finally {
       setIsFetchingUserById(false);
     }
@@ -50,7 +53,7 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          "https://admin-delta-rosy.vercel.app/api/user",
+          "https://admin-delta-rosy.vercel.app/api/people",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -74,7 +77,7 @@ const Users = () => {
 
     try {
       const res = await fetch(
-        `https://admin-delta-rosy.vercel.app/api/user/${userId}`,
+        `https://admin-delta-rosy.vercel.app/api/prople/${userId}`,
         {
           method: "DELETE",
           headers: {
@@ -127,14 +130,22 @@ const Users = () => {
 
   return (
     <div className="p-4 max-w-full">
-      <div className="mb-4 max-w-sm">
+      <div className="mb-4 flex items-center justify-between w-full">
         <input
           id="search"
           type="text"
           placeholder="Search by name or email"
           {...register("search")}
-          className="flex h-11 w-full rounded-md border border-primary-10/30 bg-white px-4 py-2 text-sm text-gray-700 shadow-sm transition-transform focus:scale-[1.02] focus:ring-2 focus:ring-primary-10 focus:outline-none"
+          className="flex h-11 w-full max-w-[400px] rounded-md border border-primary-10/30 bg-white px-4 py-2 text-sm text-gray-700 shadow-sm transition-transform focus:scale-[1.02] focus:ring-2 focus:ring-primary-10 focus:outline-none"
         />
+
+         <button
+            type="submit"
+            className={`rounded-md px-4 py-2 font-medium text-white transition-all duration-300 cursor-pointer bg-primary-10 hover:bg-[#244F5B] active:scale-95`}
+            onClick={() => setIsAddPeopleModalOpen(true)}
+          >
+            Add People
+          </button>
       </div>
 
       <div className="overflow-x-auto">
@@ -149,7 +160,6 @@ const Users = () => {
                 "Linkedin URL",
                 "Designation",
                 "Station",
-                "Role",
                 "Action",
               ].map((h) => (
                 <th
@@ -193,7 +203,7 @@ const Users = () => {
                   <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
                     {user?.email}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
+                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200 hover:underline">
                     <a
                       href={
                         user?.linkedInUrl?.startsWith("http")
@@ -212,9 +222,6 @@ const Users = () => {
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
                     {user?.station || "-"}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
-                    {user?.role || "-"}
                   </td>
                   <td className="relative px-4 py-3 text-sm border-b border-gray-200">
                     <div
@@ -306,6 +313,12 @@ const Users = () => {
           onClose={() => setIsModalOpen(false)}
           user={selectedUser}
           isFetchingUserById={isFetchingUserById}
+        />
+      )}
+
+      {isAddPeopleModalOpen && (
+        <AddPeopleModal
+          onClose={() => setIsModalOpen(false)}
         />
       )}
     </div>

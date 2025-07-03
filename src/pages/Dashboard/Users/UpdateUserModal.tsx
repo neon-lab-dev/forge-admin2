@@ -5,7 +5,6 @@ import { FiX } from "react-icons/fi";
 import type { TUser } from "../../../types/users.types";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
 import { toast } from "sonner";
-import SelectDropdown from "../../../components/Reusable/SelectDropdown/SelectDropdown";
 import Loader from "../../../components/Reusable/Loader/Loader";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -17,7 +16,11 @@ interface UpdateUserModalProps {
   isFetchingUserById: boolean;
 }
 
-const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user, isFetchingUserById }) => {
+const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
+  onClose,
+  user,
+  isFetchingUserById,
+}) => {
   const {
     register,
     handleSubmit,
@@ -40,27 +43,27 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user, isFetc
   }, [user, setValue]);
 
   const handleUpdateUser = async (userId: string, formData: FormData) => {
-  const toastId = toast.loading("Updating user...");
-  const token = Cookies.get("accessToken");
+    const toastId = toast.loading("Updating user...");
+    const token = Cookies.get("accessToken");
 
-  try {
-    await axios.put(
-      `https://admin-delta-rosy.vercel.app/api/user/${userId}`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
-      }
-    );
+    try {
+      await axios.put(
+        `https://admin-delta-rosy.vercel.app/api/people/${userId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
 
-    toast.success("User updated successfully", { id: toastId });
-  } catch (error) {
-    toast.error("Something went wrong!", { id: toastId });
-    console.error("Update Error:", error);
-  }
-};
+      toast.success("User updated successfully", { id: toastId });
+    } catch (error) {
+      toast.error("Something went wrong!", { id: toastId });
+      console.error("Update Error:", error);
+    }
+  };
 
   const onSubmit = async (data: any) => {
     const formData = new FormData();
@@ -70,7 +73,6 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user, isFetc
     formData.append("linkedInUrl", data.linkedInUrl);
     formData.append("writeUp", data.writeUp);
     formData.append("station", data.station);
-    formData.append("role", data.role);
 
     if (data.file && data.file[0]) {
       formData.append("file", data.file[0]);
@@ -91,7 +93,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user, isFetc
           className="bg-white w-full max-w-md rounded-lg shadow-lg p-6 text-center animate-scaleIn h-[450px] md:h-[600px] flex items-center justify-center"
           onClick={(e) => e.stopPropagation()}
         >
-         <Loader size={40} />
+          <Loader size={40} />
         </div>
       ) : (
         <div
@@ -171,12 +173,6 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ onClose, user, isFetc
               placeholder="Enter your station"
               {...register("station")}
               error={errors.station}
-            />
-            <SelectDropdown
-              label="Role"
-              {...register("role")}
-              error={errors?.role}
-              options={["USER", "ADMIN"]}
             />
             <button
               type="submit"
