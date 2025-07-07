@@ -100,6 +100,7 @@ const Users = () => {
     }
   };
 
+
   const filteredUsers = users?.filter((user) => {
     const term = searchTerm.toLowerCase();
     return (
@@ -107,6 +108,8 @@ const Users = () => {
       user?.email?.toLowerCase().includes(term)
     );
   });
+
+    console.log(filteredUsers);
 
   const toggleDropdown = (id: string) =>
     setDropdownOpen((prev) => (prev === id ? null : id));
@@ -160,6 +163,8 @@ const Users = () => {
                 "Linkedin URL",
                 "Designation",
                 "Station",
+                "Category",
+                "Verticles",
                 "Action",
               ].map((h) => (
                 <th
@@ -222,6 +227,12 @@ const Users = () => {
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
                     {user?.station || "-"}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
+                    {user?.category?.join(", ") || "-"}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
+                    {user?.verticles?.join(", ") || "-"}
                   </td>
                   <td className="relative px-4 py-3 text-sm border-b border-gray-200">
                     <div
@@ -318,7 +329,7 @@ const Users = () => {
 
       {isAddPeopleModalOpen && (
         <AddPeopleModal
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => setIsAddPeopleModalOpen(false)}
         />
       )}
     </div>

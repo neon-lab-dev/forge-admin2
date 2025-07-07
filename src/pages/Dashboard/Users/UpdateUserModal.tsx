@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiX } from "react-icons/fi";
 import type { TUser } from "../../../types/users.types";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import Loader from "../../../components/Reusable/Loader/Loader";
 import axios from "axios";
 import Cookies from "js-cookie";
+import SelectDropdown from "../../../components/Reusable/SelectDropdown/SelectDropdown";
 
 interface UpdateUserModalProps {
   userId: string;
@@ -21,6 +22,33 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   user,
   isFetchingUserById,
 }) => {
+  const [selectedVerticles, setSelectedVerticles] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  console.log(selectedCategories);
+  console.log(selectedVerticles);
+
+  const handleVerticleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (!selectedVerticles.includes(value)) {
+      setSelectedVerticles((prev) => [...prev, value]);
+    }
+  };
+
+  const handleRemoveVerticle = (value: string) => {
+    setSelectedVerticles((prev) => prev.filter((item) => item !== value));
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (!selectedCategories.includes(value)) {
+      setSelectedCategories((prev) => [...prev, value]);
+    }
+  };
+
+  const handleRemoveCategory = (value: string) => {
+    setSelectedCategories((prev) => prev.filter((item) => item !== value));
+  };
+
   const {
     register,
     handleSubmit,
@@ -39,6 +67,8 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
       setValue("station", user.station || "");
       setValue("role", user.role || "");
       setValue("photo", user?.photo?.url || "");
+      setSelectedVerticles(user.verticles || []);
+      setSelectedCategories(user.category || []);
     }
   }, [user, setValue]);
 
@@ -73,6 +103,8 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
     formData.append("linkedInUrl", data.linkedInUrl);
     formData.append("writeUp", data.writeUp);
     formData.append("station", data.station);
+    formData.append("verticles", JSON.stringify(selectedVerticles));
+    formData.append("category", JSON.stringify(selectedCategories));
 
     if (data.file && data.file[0]) {
       formData.append("file", data.file[0]);
@@ -82,6 +114,25 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
     onClose();
     window.location.reload();
   };
+
+  const verticleOptions = [
+    "Forge Labs",
+    "Fort",
+    "Academy",
+    "Sales",
+    "Human Resources",
+    "Product",
+    "Operations",
+    "Finance",
+  ];
+  const categoryOptions = [
+    "Board of Governors",
+    "Executive Leadership",
+    "Executives General Management",
+    "Executives Program Management",
+    "Experts",
+    "Enablers",
+  ];
 
   return (
     <div
@@ -174,6 +225,59 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               {...register("station")}
               error={errors.station}
             />
+
+            <div>
+              <SelectDropdown
+                label="Verticles"
+                options={verticleOptions}
+                onChange={handleVerticleChange}
+                isRequired={false}
+              />
+              {selectedVerticles.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedVerticles.map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center bg-gray-200 text-sm px-3 py-1 rounded-full"
+                    >
+                      {item}
+                      <FiX
+                        className="ml-2 cursor-pointer text-gray-600 hover:text-red-600"
+                        size={14}
+                        onClick={() => handleRemoveVerticle(item)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <SelectDropdown
+                label="Categories"
+                options={categoryOptions}
+                onChange={handleCategoryChange}
+                isRequired={false}
+              />
+              {selectedCategories.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedCategories.map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center bg-gray-200 text-sm px-3 py-1 rounded-full"
+                    >
+                      {item}
+                      <FiX
+                        className="ml-2 cursor-pointer text-gray-600 hover:text-red-600"
+                        size={14}
+                        onClick={() => handleRemoveCategory(item)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <button
               type="submit"
               className="w-full rounded-md bg-primary-10 hover:bg-[#244F5B] active:scale-95 px-4 py-2 text-white font-medium transition duration-300 cursor-pointer"

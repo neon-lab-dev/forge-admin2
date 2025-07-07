@@ -1,6 +1,8 @@
 export type TUser = {
   id: string;
   name: string;
+  verticles: string[];
+  category: string[];
   email: string;
   designation?: string;
   linkedInUrl?: string;

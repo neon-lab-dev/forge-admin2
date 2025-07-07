@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { forwardRef } from "react";
+import { forwardRef, type SelectHTMLAttributes } from "react";
 import type { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 
-interface DropdownProps {
+
+interface DropdownProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
   options: string[];
   error?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
