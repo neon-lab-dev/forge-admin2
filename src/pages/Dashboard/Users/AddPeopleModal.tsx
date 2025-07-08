@@ -12,30 +12,19 @@ interface AddPeopleModalProps {
   onClose: () => void;
 }
 
+type RoleField = "verticle" | "category" | "role";
+
 const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
-  const [selectedVerticles, setSelectedVerticles] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [rolesData, setRolesData] = useState([
+    { verticle: "", category: "", role: "" },
+    { verticle: "", category: "", role: "" },
+    { verticle: "", category: "", role: "" },
+  ]);
 
-  const handleVerticleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (!selectedVerticles.includes(value)) {
-      setSelectedVerticles((prev) => [...prev, value]);
-    }
-  };
-
-  const handleRemoveVerticle = (value: string) => {
-    setSelectedVerticles((prev) => prev.filter((item) => item !== value));
-  };
-
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (!selectedCategories.includes(value)) {
-      setSelectedCategories((prev) => [...prev, value]);
-    }
-  };
-
-  const handleRemoveCategory = (value: string) => {
-    setSelectedCategories((prev) => prev.filter((item) => item !== value));
+  const handleRoleChange = (index: number, field: RoleField, value: string) => {
+    const updated = [...rolesData];
+    updated[index][field] = value;
+    setRolesData(updated);
   };
 
   const {
@@ -72,12 +61,10 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("email", data.email);
-    formData.append("designation", data.designation);
     formData.append("linkedInUrl", data.linkedInUrl);
     formData.append("writeUp", data.writeUp);
     formData.append("station", data.station);
-    formData.append("verticles", JSON.stringify(selectedVerticles));
-    formData.append("category", JSON.stringify(selectedCategories));
+    formData.append("roles", JSON.stringify(rolesData));
 
     if (data.file && data.file[0]) {
       formData.append("file", data.file[0]);
@@ -113,7 +100,7 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-md h-[450px] md:h-[600px] overflow-y-auto rounded-lg shadow-lg p-6 relative animate-scaleIn"
+        className="bg-white w-full max-w-xl h-[450px] md:h-[600px] overflow-y-auto rounded-lg shadow-lg p-6 relative animate-scaleIn"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -154,78 +141,71 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
             error={errors.email}
           />
           <TextInput
-            label="Designation"
-            placeholder="Enter your designation"
-            {...register("designation")}
-            error={errors.designation}
-          />
-          <TextInput
             label="LinkedIn Url"
             placeholder="Enter your linkedIn profile url"
             {...register("linkedInUrl")}
             error={errors.linkedInUrl}
+            isRequired={false}
           />
           <TextInput
             label="Bio"
             placeholder="Enter your bio"
             {...register("writeUp")}
             error={errors.writeUp}
+            isRequired={false}
           />
           <TextInput
             label="Station"
             placeholder="Enter your station"
             {...register("station")}
             error={errors.station}
+            isRequired={false}
           />
 
-          <div>
-            <SelectDropdown
-              label="Verticles"
-              options={verticleOptions}
-              onChange={handleVerticleChange}
-            />
-            {selectedVerticles.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {selectedVerticles.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center bg-gray-200 text-sm px-3 py-1 rounded-full"
-                  >
-                    {item}
-                    <FiX
-                      className="ml-2 cursor-pointer text-gray-600 hover:text-red-600"
-                      size={14}
-                      onClick={() => handleRemoveVerticle(item)}
-                    />
-                  </div>
-                ))}
+          <div className="space-y-4">
+            {/* Dynamic Multiple Fields */}
+            {rolesData.map((entry, index) => (
+              <div key={index} className="grid grid-cols-3 gap-4">
+                <SelectDropdown
+                  label="Verticle"
+                  options={verticleOptions}
+                  value={entry.verticle}
+                  onChange={(e) =>
+                    handleRoleChange(index, "verticle", e.target.value)
+                  }
+                />
+                <SelectDropdown
+                  label="Categories"
+                  options={categoryOptions}
+                  value={entry.category}
+                  onChange={(e) =>
+                    handleRoleChange(index, "category", e.target.value)
+                  }
+                />
+                <TextInput
+                  label="Role"
+                  placeholder="Enter role"
+                  value={entry.role}
+                  onChange={(e) =>
+                    handleRoleChange(index, "role", e.target.value)
+                  }
+                />
               </div>
-            )}
-          </div>
-
-          <div>
-            <SelectDropdown
-              label="Categories"
-              options={categoryOptions}
-              onChange={handleCategoryChange}
-            />
-            {selectedCategories.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {selectedCategories.map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center bg-gray-200 text-sm px-3 py-1 rounded-full"
-                  >
-                    {item}
-                    <FiX
-                      className="ml-2 cursor-pointer text-gray-600 hover:text-red-600"
-                      size={14}
-                      onClick={() => handleRemoveCategory(item)}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+            ))}
+            <div className="flex justify-end">
+              <button
+                onClick={() =>
+                  setRolesData([
+                    ...rolesData,
+                    { verticle: "", category: "", role: "" },
+                  ])
+                }
+                type="button"
+                className="block text-gray-500 font-Inter font-medium cursor-pointer italic"
+              >
+                +Add More
+              </button>
+            </div>
           </div>
 
           <button

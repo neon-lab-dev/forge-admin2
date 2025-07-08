@@ -4,7 +4,7 @@ import type { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 
 interface TextInputProps {
   label: string;
-  name: string;
+  name?: string;
   placeholder?: string;
   type?: string;
   error?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
