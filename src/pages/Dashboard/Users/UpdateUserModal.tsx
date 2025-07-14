@@ -100,8 +100,8 @@ useEffect(() => {
     }
 
     await handleUpdateUser(user?.id || "", formData);
-    // onClose();
-    // window.location.reload();
+    onClose();
+    window.location.reload();
   };
 
     const handleDeleteRole = (index: number) => {
