@@ -50,7 +50,7 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         }),
-        axios.get("https://admin-delta-rosy.vercel.app/api/verticle", {
+        axios.get("https://admin-delta-rosy.vercel.app/api/verticles", {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         }),
@@ -60,7 +60,7 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
         (cat: any) => cat.name
       );
 
-      const verticles = verticleRes.data?.data?.verticles?.map(
+      const verticles = verticleRes.data?.data?.Verticles?.map(
         (v: any) => v.name
       );
 

@@ -4,21 +4,21 @@ import { FiTrash2 } from "react-icons/fi";
 import Loader from "../../../components/Reusable/Loader/Loader";
 import axios from "axios";
 import Cookies from "js-cookie";
-import AddCategoryModal from "./AddCategoryModal";
 import { toast } from "sonner";
+import AddVerticleModal from "./AddVerticleModal";
 
-const Category = () => {
+const Verticle = () => {
   const token = Cookies.get("accessToken");
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  const [verticles, setVerticles] = useState<any[]>([]);
+  const [isAddVerticleModalOpen, setIsAddVerticleModalOpen] = useState(false);
 
   // Fetch all categories
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          "https://admin-delta-rosy.vercel.app/api/category",
+          "https://admin-delta-rosy.vercel.app/api/verticles",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -26,9 +26,9 @@ const Category = () => {
             withCredentials: true,
           }
         );
-        setCategories(res.data?.data?.categories);
+        setVerticles(res.data?.data?.Verticles);
       } catch (err) {
-        console.error("Failed to fetch users:", err);
+        console.error("Failed to fetch:", err);
       } finally {
         setLoading(false);
       }
@@ -38,12 +38,12 @@ const Category = () => {
   }, [token]);
 
   //   Delete category
-  const deleteCategory = async (id: string) => {
+  const deleteVerticle = async (id: string) => {
     const toastId = toast.loading("Deleting user...");
 
     try {
       const res = await fetch(
-        `https://admin-delta-rosy.vercel.app/api/category/${id}`,
+        `https://admin-delta-rosy.vercel.app/api/verticles/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -71,9 +71,9 @@ const Category = () => {
         <button
           type="submit"
           className={`rounded-md px-4 py-2 font-medium text-white transition-all duration-300 cursor-pointer bg-primary-10 hover:bg-[#244F5B] active:scale-95 mb-4`}
-          onClick={() => setIsAddCategoryModalOpen(true)}
+          onClick={() => setIsAddVerticleModalOpen(true)}
         >
-          Add Category
+          Add Verticle
         </button>
       </div>
 
@@ -83,25 +83,25 @@ const Category = () => {
             <Loader size={25} />
             <p className="text-gray-800">Please wait...</p>
           </div>
-        ) : categories?.length > 0 ? (
+        ) : verticles?.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {categories.map((category, idx) => (
+            {verticles.map((verticle, idx) => (
               <div
-                key={category.id || idx}
+                key={verticle.id || idx}
                 className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition"
               >
                 <div className="text-sm text-gray-500 mb-1">Sl: {idx + 1}</div>
                 <div className="text-lg font-semibold text-gray-800 mb-3">
-                  {category?.name}
+                  {verticle?.name}
                 </div>
                 <button
                   className="flex items-center text-sm text-red-600 hover:text-red-800 cursor-pointer"
                   onClick={() => {
                     const confirmDelete = confirm(
-                      `Are you sure you want to delete ${category.name}?`
+                      `Are you sure you want to delete ${verticle.name}?`
                     );
                     if (confirmDelete) {
-                      deleteCategory(category?.id || "");
+                      deleteVerticle(verticle?.id || "");
                     }
                   }}
                 >
@@ -112,7 +112,7 @@ const Category = () => {
           </div>
         ) : (
           <div className="text-center py-6 text-gray-500">
-            No categories found
+            No verticles found
           </div>
         )}
       </div>
@@ -135,11 +135,11 @@ const Category = () => {
       `}
       </style>
 
-      {isAddCategoryModalOpen && (
-        <AddCategoryModal onClose={() => setIsAddCategoryModalOpen(false)} />
+      {isAddVerticleModalOpen && (
+        <AddVerticleModal onClose={() => setIsAddVerticleModalOpen(false)} />
       )}
     </div>
   );
 };
 
-export default Category;
+export default Verticle;

@@ -6,6 +6,7 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import DashboardLayout from "../layout/DashboardLayout";
 import Users from "../pages/Dashboard/Users/Users";
 import Category from "../pages/Dashboard/Category/Category";
+import Verticle from "../pages/Dashboard/Verticle/Verticle";
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: "category",
         element:<Category />,
+      },
+      {
+        path: "verticle",
+        element:<Verticle />,
       },
     ],
   },
