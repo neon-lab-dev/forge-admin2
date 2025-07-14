@@ -16,9 +16,10 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ onClose }) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm<any>();
 
-  const handAddPeople = async (formData: FormData) => {
+  const handAddCategory = async (formData: any) => {
+    console.log(formData);
     const toastId = toast.loading("Loading...");
     const token = Cookies.get("accessToken");
 
@@ -42,14 +43,10 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ onClose }) => {
   };
 
   const onSubmit = async (data: any) => {
-    const formData = new FormData();
-    formData.append("name", data.name);
-
-    await handAddPeople(formData);
+    await handAddCategory({ name: data.name });
     onClose();
     window.location.reload();
   };
-
 
   return (
     <div
@@ -57,7 +54,7 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ onClose }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-xl h-[450px] md:h-[600px] overflow-y-auto rounded-lg shadow-lg p-6 relative animate-scaleIn"
+        className="bg-white w-full max-w-xl h-fit overflow-y-auto rounded-lg shadow-lg p-6 relative animate-scaleIn"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -69,22 +66,10 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ onClose }) => {
         >
           <FiX size={20} />
         </button>
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Add Category</h2>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+          Add Category
+        </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Select Profile Image
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              {...register("file")}
-              className="w-full text-sm file:mr-4 file:py-2 file:px-4
-               file:rounded-md file:border-0 file:text-sm file:font-semibold
-               file:bg-primary-10 file:text-white hover:file:bg-[#244F5B]"
-            />
-          </div>
-
           <TextInput
             label="Name"
             placeholder="Enter category"

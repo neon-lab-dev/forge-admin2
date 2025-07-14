@@ -12,8 +12,9 @@ const Category = () => {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<any[]>([]);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  console.log(categories);
 
-  // Fetch all users
+  // Fetch all categories
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -26,7 +27,6 @@ const Category = () => {
             withCredentials: true,
           }
         );
-        console.log(res);
         setCategories(res.data?.data?.categories);
       } catch (err) {
         console.error("Failed to fetch users:", err);
@@ -73,7 +73,7 @@ const Category = () => {
         className={`rounded-md px-4 py-2 font-medium text-white transition-all duration-300 cursor-pointer bg-primary-10 hover:bg-[#244F5B] active:scale-95 mb-4`}
         onClick={() => setIsAddCategoryModalOpen(true)}
       >
-        Add People
+        Add Category
       </button>
 
       <div className="overflow-x-auto">
