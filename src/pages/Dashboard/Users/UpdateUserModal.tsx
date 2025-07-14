@@ -9,7 +9,7 @@ import Loader from "../../../components/Reusable/Loader/Loader";
 import axios from "axios";
 import Cookies from "js-cookie";
 import SelectDropdown from "../../../components/Reusable/SelectDropdown/SelectDropdown";
-import { categoryOptions, verticleOptions, type RoleField } from "./AddPeopleModal";
+import { type RoleField } from "./AddPeopleModal";
 import { TiDeleteOutline } from "react-icons/ti";
 
 interface UpdateUserModalProps {
@@ -24,15 +24,55 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   user,
   isFetchingUserById,
 }) => {
- const [rolesData, setRolesData] = useState([{ verticle: "", category: "", role: "" }]);
+  const token = Cookies.get("accessToken");
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [verticles, setVerticles] = useState<any[]>([]);
 
+  // Fetch all categories and verticles
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoryRes, verticleRes] = await Promise.all([
+          axios.get("https://admin-delta-rosy.vercel.app/api/category", {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+          }),
+          axios.get("https://admin-delta-rosy.vercel.app/api/verticles", {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+          }),
+        ]);
 
- 
-   const handleRoleChange = (index: number, field: RoleField, value: string) => {
-     const updated = [...rolesData];
-     updated[index][field] = value;
-     setRolesData(updated);
-   };
+        const categories = categoryRes.data?.data?.categories?.map(
+          (cat: any) => cat.name
+        );
+
+        const verticles = verticleRes.data?.data?.Verticles?.map(
+          (v: any) => v.name
+        );
+
+        setCategories(categories || []);
+        setVerticles(verticles || []);
+      } catch (err) {
+        console.error("Failed to fetch categories or verticles:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [token]);
+
+  const [rolesData, setRolesData] = useState([
+    { verticle: "", category: "", role: "" },
+  ]);
+
+  const handleRoleChange = (index: number, field: RoleField, value: string) => {
+    const updated = [...rolesData];
+    updated[index][field] = value;
+    setRolesData(updated);
+  };
 
   const {
     register,
@@ -43,25 +83,24 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   } = useForm();
 
   // Setting default values
-useEffect(() => {
-  if (user) {
-    setValue("name", user.name);
-    setValue("email", user.email);
-    setValue("linkedInUrl", user.linkedInUrl || "");
-    setValue("writeUp", user.writeUp || "");
-    setValue("station", user.station || "");
-    setValue("role", user.role || "");
-    setValue("photo", user?.photo?.url || "");
+  useEffect(() => {
+    if (user) {
+      setValue("name", user.name);
+      setValue("email", user.email);
+      setValue("linkedInUrl", user.linkedInUrl || "");
+      setValue("writeUp", user.writeUp || "");
+      setValue("station", user.station || "");
+      setValue("role", user.role || "");
+      setValue("photo", user?.photo?.url || "");
 
-    // Set default attributes
-    if (user.attributes && user.attributes.length > 0) {
-      setRolesData(user.attributes);
-    } else {
-      setRolesData([{ verticle: "", category: "", role: "" }]);
+      // Set default attributes
+      if (user.attributes && user.attributes.length > 0) {
+        setRolesData(user.attributes);
+      } else {
+        setRolesData([{ verticle: "", category: "", role: "" }]);
+      }
     }
-  }
-}, [user, setValue]);
-
+  }, [user, setValue]);
 
   const handleUpdateUser = async (userId: string, formData: FormData) => {
     const toastId = toast.loading("Updating user...");
@@ -104,7 +143,7 @@ useEffect(() => {
     window.location.reload();
   };
 
-    const handleDeleteRole = (index: number) => {
+  const handleDeleteRole = (index: number) => {
     if (rolesData.length <= 1) return;
 
     const updated = rolesData.filter((_, i) => i !== index);
@@ -116,7 +155,7 @@ useEffect(() => {
       className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center animate-fadeIn"
       onClick={onClose}
     >
-      {isFetchingUserById || !user ? (
+      {isFetchingUserById || !user || loading ? (
         <div
           className="bg-white w-full max-w-md rounded-lg shadow-lg p-6 text-center animate-scaleIn h-[450px] md:h-[600px] flex items-center justify-center"
           onClick={(e) => e.stopPropagation()}
@@ -197,57 +236,57 @@ useEffect(() => {
               error={errors.station}
             />
 
-          <div className="space-y-4">
-            {/* Dynamic Multiple Fields */}
-            {rolesData.map((entry, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div className="grid grid-cols-3 gap-4">
-                  <SelectDropdown
-                    label="Verticle"
-                    options={verticleOptions}
-                    value={entry.verticle}
-                    onChange={(e) =>
-                      handleRoleChange(index, "verticle", e.target.value)
-                    }
-                  />
-                  <SelectDropdown
-                    label="Categories"
-                    options={categoryOptions}
-                    value={entry.category}
-                    onChange={(e) =>
-                      handleRoleChange(index, "category", e.target.value)
-                    }
-                  />
-                  <TextInput
-                    label="Role"
-                    placeholder="Enter role"
-                    value={entry.role}
-                    onChange={(e) =>
-                      handleRoleChange(index, "role", e.target.value)
-                    }
+            <div className="space-y-4">
+              {/* Dynamic Multiple Fields */}
+              {rolesData.map((entry, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div className="grid grid-cols-3 gap-4">
+                    <SelectDropdown
+                      label="Verticle"
+                      options={verticles}
+                      value={entry.verticle}
+                      onChange={(e) =>
+                        handleRoleChange(index, "verticle", e.target.value)
+                      }
+                    />
+                    <SelectDropdown
+                      label="Categories"
+                      options={categories}
+                      value={entry.category}
+                      onChange={(e) =>
+                        handleRoleChange(index, "category", e.target.value)
+                      }
+                    />
+                    <TextInput
+                      label="Role"
+                      placeholder="Enter role"
+                      value={entry.role}
+                      onChange={(e) =>
+                        handleRoleChange(index, "role", e.target.value)
+                      }
+                    />
+                  </div>
+                  <TiDeleteOutline
+                    onClick={() => handleDeleteRole(index)}
+                    className="text-red-500 text-4xl cursor-pointer mt-8"
                   />
                 </div>
-                <TiDeleteOutline
-                  onClick={() => handleDeleteRole(index)}
-                  className="text-red-500 text-4xl cursor-pointer mt-8"
-                />
+              ))}
+              <div className="flex justify-end">
+                <button
+                  onClick={() =>
+                    setRolesData([
+                      ...rolesData,
+                      { verticle: "", category: "", role: "" },
+                    ])
+                  }
+                  type="button"
+                  className="block text-gray-500 font-Inter font-medium cursor-pointer italic"
+                >
+                  +Add More
+                </button>
               </div>
-            ))}
-            <div className="flex justify-end">
-              <button
-                onClick={() =>
-                  setRolesData([
-                    ...rolesData,
-                    { verticle: "", category: "", role: "" },
-                  ])
-                }
-                type="button"
-                className="block text-gray-500 font-Inter font-medium cursor-pointer italic"
-              >
-                +Add More
-              </button>
             </div>
-          </div>
 
             <button
               type="submit"

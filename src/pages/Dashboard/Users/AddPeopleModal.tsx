@@ -41,7 +41,7 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
   const [categories, setCategories] = useState<any[]>([]);
   const [verticles, setVerticles] = useState<any[]>([]);
 
-  // Fetch all categories
+  // Fetch all categories and verticles
  useEffect(() => {
   const fetchData = async () => {
     try {
