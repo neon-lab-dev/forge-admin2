@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { FiChevronLeft, FiChevronRight, FiUsers } from "react-icons/fi";
+import { FiBox, FiChevronLeft, FiChevronRight, FiUsers } from "react-icons/fi";
+import { MdOutlineCategory } from "react-icons/md";
 
 const links = [
   {
@@ -8,11 +9,16 @@ const links = [
     path: "/dashboard/users",
     icon: <FiUsers size={18} />,
   },
-//   {
-//     name: "Products",
-//     path: "/dashboard/products",
-//     icon: <FiBox size={18} />,
-//   },
+  {
+    name: "Category",
+    path: "/dashboard/category",
+    icon: <MdOutlineCategory size={18} />,
+  },
+  {
+    name: "Verticle",
+    path: "/dashboard/verticle",
+    icon: <FiBox size={18} />,
+  },
 ];
 
 const Sidebar = () => {

@@ -4,7 +4,11 @@ export type TUser = {
   verticles: string[];
   category: string[];
   email: string;
-  designation?: string;
+  attributes : {
+    verticle: string;
+    category: string;
+    role: string;
+  }[];
   linkedInUrl?: string;
   writeUp?: string;
   station?: string;

@@ -5,6 +5,7 @@ import ProtectedRoute from './ProtectedRoute';
 import Dashboard from "../pages/Dashboard/Dashboard";
 import DashboardLayout from "../layout/DashboardLayout";
 import Users from "../pages/Dashboard/Users/Users";
+import Category from "../pages/Dashboard/Category/Category";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
       {
         path: "users",
         element:<Users />,
+      },
+      {
+        path: "category",
+        element:<Category />,
       },
     ],
   },

@@ -9,6 +9,8 @@ import Loader from "../../../components/Reusable/Loader/Loader";
 import axios from "axios";
 import Cookies from "js-cookie";
 import SelectDropdown from "../../../components/Reusable/SelectDropdown/SelectDropdown";
+import { categoryOptions, verticleOptions, type RoleField } from "./AddPeopleModal";
+import { TiDeleteOutline } from "react-icons/ti";
 
 interface UpdateUserModalProps {
   userId: string;
@@ -22,32 +24,15 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   user,
   isFetchingUserById,
 }) => {
-  const [selectedVerticles, setSelectedVerticles] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  console.log(selectedCategories);
-  console.log(selectedVerticles);
+ const [rolesData, setRolesData] = useState([{ verticle: "", category: "", role: "" }]);
 
-  const handleVerticleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (!selectedVerticles.includes(value)) {
-      setSelectedVerticles((prev) => [...prev, value]);
-    }
-  };
 
-  const handleRemoveVerticle = (value: string) => {
-    setSelectedVerticles((prev) => prev.filter((item) => item !== value));
-  };
-
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (!selectedCategories.includes(value)) {
-      setSelectedCategories((prev) => [...prev, value]);
-    }
-  };
-
-  const handleRemoveCategory = (value: string) => {
-    setSelectedCategories((prev) => prev.filter((item) => item !== value));
-  };
+ 
+   const handleRoleChange = (index: number, field: RoleField, value: string) => {
+     const updated = [...rolesData];
+     updated[index][field] = value;
+     setRolesData(updated);
+   };
 
   const {
     register,
@@ -57,20 +42,26 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
     formState: { errors },
   } = useForm();
 
-  useEffect(() => {
-    if (user) {
-      setValue("name", user.name);
-      setValue("email", user.email);
-      setValue("designation", user.designation || "");
-      setValue("linkedInUrl", user.linkedInUrl || "");
-      setValue("writeUp", user.writeUp || "");
-      setValue("station", user.station || "");
-      setValue("role", user.role || "");
-      setValue("photo", user?.photo?.url || "");
-      setSelectedVerticles(user.verticles || []);
-      setSelectedCategories(user.category || []);
+  // Setting default values
+useEffect(() => {
+  if (user) {
+    setValue("name", user.name);
+    setValue("email", user.email);
+    setValue("linkedInUrl", user.linkedInUrl || "");
+    setValue("writeUp", user.writeUp || "");
+    setValue("station", user.station || "");
+    setValue("role", user.role || "");
+    setValue("photo", user?.photo?.url || "");
+
+    // Set default attributes
+    if (user.attributes && user.attributes.length > 0) {
+      setRolesData(user.attributes);
+    } else {
+      setRolesData([{ verticle: "", category: "", role: "" }]);
     }
-  }, [user, setValue]);
+  }
+}, [user, setValue]);
+
 
   const handleUpdateUser = async (userId: string, formData: FormData) => {
     const toastId = toast.loading("Updating user...");
@@ -99,40 +90,26 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("email", data.email);
-    formData.append("designation", data.designation);
     formData.append("linkedInUrl", data.linkedInUrl);
     formData.append("writeUp", data.writeUp);
     formData.append("station", data.station);
-    formData.append("verticles", JSON.stringify(selectedVerticles));
-    formData.append("category", JSON.stringify(selectedCategories));
+    formData.append("attributes", JSON.stringify(rolesData));
 
     if (data.file && data.file[0]) {
       formData.append("file", data.file[0]);
     }
 
     await handleUpdateUser(user?.id || "", formData);
-    onClose();
-    window.location.reload();
+    // onClose();
+    // window.location.reload();
   };
 
-  const verticleOptions = [
-    "Forge Labs",
-    "Fort",
-    "Academy",
-    "Sales",
-    "Human Resources",
-    "Product",
-    "Operations",
-    "Finance",
-  ];
-  const categoryOptions = [
-    "Board of Governors",
-    "Executive Leadership",
-    "Executives General Management",
-    "Executives Program Management",
-    "Experts",
-    "Enablers",
-  ];
+    const handleDeleteRole = (index: number) => {
+    if (rolesData.length <= 1) return;
+
+    const updated = rolesData.filter((_, i) => i !== index);
+    setRolesData(updated);
+  };
 
   return (
     <div
@@ -202,12 +179,6 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               error={errors.email}
             />
             <TextInput
-              label="Designation"
-              placeholder="Enter your designation"
-              {...register("designation")}
-              error={errors.designation}
-            />
-            <TextInput
               label="LinkedIn Url"
               placeholder="Enter your linkedIn profile url"
               {...register("linkedInUrl")}
@@ -226,57 +197,57 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               error={errors.station}
             />
 
-            <div>
-              <SelectDropdown
-                label="Verticles"
-                options={verticleOptions}
-                onChange={handleVerticleChange}
-                isRequired={false}
-              />
-              {selectedVerticles.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {selectedVerticles.map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center bg-gray-200 text-sm px-3 py-1 rounded-full"
-                    >
-                      {item}
-                      <FiX
-                        className="ml-2 cursor-pointer text-gray-600 hover:text-red-600"
-                        size={14}
-                        onClick={() => handleRemoveVerticle(item)}
-                      />
-                    </div>
-                  ))}
+          <div className="space-y-4">
+            {/* Dynamic Multiple Fields */}
+            {rolesData.map((entry, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <div className="grid grid-cols-3 gap-4">
+                  <SelectDropdown
+                    label="Verticle"
+                    options={verticleOptions}
+                    value={entry.verticle}
+                    onChange={(e) =>
+                      handleRoleChange(index, "verticle", e.target.value)
+                    }
+                  />
+                  <SelectDropdown
+                    label="Categories"
+                    options={categoryOptions}
+                    value={entry.category}
+                    onChange={(e) =>
+                      handleRoleChange(index, "category", e.target.value)
+                    }
+                  />
+                  <TextInput
+                    label="Role"
+                    placeholder="Enter role"
+                    value={entry.role}
+                    onChange={(e) =>
+                      handleRoleChange(index, "role", e.target.value)
+                    }
+                  />
                 </div>
-              )}
+                <TiDeleteOutline
+                  onClick={() => handleDeleteRole(index)}
+                  className="text-red-500 text-4xl cursor-pointer mt-8"
+                />
+              </div>
+            ))}
+            <div className="flex justify-end">
+              <button
+                onClick={() =>
+                  setRolesData([
+                    ...rolesData,
+                    { verticle: "", category: "", role: "" },
+                  ])
+                }
+                type="button"
+                className="block text-gray-500 font-Inter font-medium cursor-pointer italic"
+              >
+                +Add More
+              </button>
             </div>
-
-            <div>
-              <SelectDropdown
-                label="Categories"
-                options={categoryOptions}
-                onChange={handleCategoryChange}
-                isRequired={false}
-              />
-              {selectedCategories.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {selectedCategories.map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center bg-gray-200 text-sm px-3 py-1 rounded-full"
-                    >
-                      {item}
-                      <FiX
-                        className="ml-2 cursor-pointer text-gray-600 hover:text-red-600"
-                        size={14}
-                        onClick={() => handleRemoveCategory(item)}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+          </div>
 
             <button
               type="submit"

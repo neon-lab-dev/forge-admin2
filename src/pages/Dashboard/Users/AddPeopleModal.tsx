@@ -7,12 +7,32 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import SelectDropdown from "../../../components/Reusable/SelectDropdown/SelectDropdown";
+import { TiDeleteOutline } from "react-icons/ti";
 
 interface AddPeopleModalProps {
   onClose: () => void;
 }
 
-type RoleField = "verticle" | "category" | "role";
+export type RoleField = "verticle" | "category" | "role";
+
+export const verticleOptions = [
+  "Forge Labs",
+  "Fort",
+  "Academy",
+  "Sales",
+  "Human Resources",
+  "Product",
+  "Operations",
+  "Finance",
+];
+export const categoryOptions = [
+  "Board of Governors",
+  "Executive Leadership",
+  "Executives General Management",
+  "Executives Program Management",
+  "Experts",
+  "Enablers",
+];
 
 const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
   const [rolesData, setRolesData] = useState([
@@ -64,7 +84,7 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
     formData.append("linkedInUrl", data.linkedInUrl);
     formData.append("writeUp", data.writeUp);
     formData.append("station", data.station);
-    formData.append("roles", JSON.stringify(rolesData));
+    formData.append("attributes", JSON.stringify(rolesData));
 
     if (data.file && data.file[0]) {
       formData.append("file", data.file[0]);
@@ -75,24 +95,12 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
     window.location.reload();
   };
 
-  const verticleOptions = [
-    "Forge Labs",
-    "Fort",
-    "Academy",
-    "Sales",
-    "Human Resources",
-    "Product",
-    "Operations",
-    "Finance",
-  ];
-  const categoryOptions = [
-    "Board of Governors",
-    "Executive Leadership",
-    "Executives General Management",
-    "Executives Program Management",
-    "Experts",
-    "Enablers",
-  ];
+  const handleDeleteRole = (index: number) => {
+    if (rolesData.length <= 1) return; // Prevent deleting the last item
+
+    const updated = rolesData.filter((_, i) => i !== index);
+    setRolesData(updated);
+  };
 
   return (
     <div
@@ -165,30 +173,36 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
           <div className="space-y-4">
             {/* Dynamic Multiple Fields */}
             {rolesData.map((entry, index) => (
-              <div key={index} className="grid grid-cols-3 gap-4">
-                <SelectDropdown
-                  label="Verticle"
-                  options={verticleOptions}
-                  value={entry.verticle}
-                  onChange={(e) =>
-                    handleRoleChange(index, "verticle", e.target.value)
-                  }
-                />
-                <SelectDropdown
-                  label="Categories"
-                  options={categoryOptions}
-                  value={entry.category}
-                  onChange={(e) =>
-                    handleRoleChange(index, "category", e.target.value)
-                  }
-                />
-                <TextInput
-                  label="Role"
-                  placeholder="Enter role"
-                  value={entry.role}
-                  onChange={(e) =>
-                    handleRoleChange(index, "role", e.target.value)
-                  }
+              <div key={index} className="flex items-center gap-2">
+                <div className="grid grid-cols-3 gap-4">
+                  <SelectDropdown
+                    label="Verticle"
+                    options={verticleOptions}
+                    value={entry.verticle}
+                    onChange={(e) =>
+                      handleRoleChange(index, "verticle", e.target.value)
+                    }
+                  />
+                  <SelectDropdown
+                    label="Categories"
+                    options={categoryOptions}
+                    value={entry.category}
+                    onChange={(e) =>
+                      handleRoleChange(index, "category", e.target.value)
+                    }
+                  />
+                  <TextInput
+                    label="Role"
+                    placeholder="Enter role"
+                    value={entry.role}
+                    onChange={(e) =>
+                      handleRoleChange(index, "role", e.target.value)
+                    }
+                  />
+                </div>
+                <TiDeleteOutline
+                  onClick={() => handleDeleteRole(index)}
+                  className="text-red-500 text-4xl cursor-pointer mt-8"
                 />
               </div>
             ))}

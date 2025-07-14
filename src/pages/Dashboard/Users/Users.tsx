@@ -100,7 +100,6 @@ const Users = () => {
     }
   };
 
-
   const filteredUsers = users?.filter((user) => {
     const term = searchTerm.toLowerCase();
     return (
@@ -109,7 +108,7 @@ const Users = () => {
     );
   });
 
-    console.log(filteredUsers);
+  console.log(filteredUsers);
 
   const toggleDropdown = (id: string) =>
     setDropdownOpen((prev) => (prev === id ? null : id));
@@ -142,13 +141,13 @@ const Users = () => {
           className="flex h-11 w-full max-w-[400px] rounded-md border border-primary-10/30 bg-white px-4 py-2 text-sm text-gray-700 shadow-sm transition-transform focus:scale-[1.02] focus:ring-2 focus:ring-primary-10 focus:outline-none"
         />
 
-         <button
-            type="submit"
-            className={`rounded-md px-4 py-2 font-medium text-white transition-all duration-300 cursor-pointer bg-primary-10 hover:bg-[#244F5B] active:scale-95`}
-            onClick={() => setIsAddPeopleModalOpen(true)}
-          >
-            Add People
-          </button>
+        <button
+          type="submit"
+          className={`rounded-md px-4 py-2 font-medium text-white transition-all duration-300 cursor-pointer bg-primary-10 hover:bg-[#244F5B] active:scale-95`}
+          onClick={() => setIsAddPeopleModalOpen(true)}
+        >
+          Add People
+        </button>
       </div>
 
       <div className="overflow-x-auto">
@@ -161,7 +160,6 @@ const Users = () => {
                 "Name",
                 "Email",
                 "Linkedin URL",
-                "Designation",
                 "Station",
                 "Category",
                 "Verticles",
@@ -222,9 +220,6 @@ const Users = () => {
                     </a>
                   </td>
 
-                  <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
-                    {user?.designation || "-"}
-                  </td>
                   <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
                     {user?.station || "-"}
                   </td>
@@ -328,9 +323,7 @@ const Users = () => {
       )}
 
       {isAddPeopleModalOpen && (
-        <AddPeopleModal
-          onClose={() => setIsAddPeopleModalOpen(false)}
-        />
+        <AddPeopleModal onClose={() => setIsAddPeopleModalOpen(false)} />
       )}
     </div>
   );
