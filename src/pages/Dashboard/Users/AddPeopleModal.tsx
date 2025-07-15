@@ -14,7 +14,7 @@ interface AddPeopleModalProps {
   onClose: () => void;
 }
 
-export type RoleField = "verticle" | "category" | "role";
+export type RoleField = "verticles" | "category" | "role";
 
 export const verticleOptions = [
   "Forge Labs",
@@ -78,9 +78,9 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
 
 
   const [rolesData, setRolesData] = useState([
-    { verticle: "", category: "", role: "" },
-    { verticle: "", category: "", role: "" },
-    { verticle: "", category: "", role: "" },
+    { verticles: "", category: "", role: "" },
+    { verticles: "", category: "", role: "" },
+    { verticles: "", category: "", role: "" },
   ]);
 
   const handleRoleChange = (index: number, field: RoleField, value: string) => {
@@ -228,9 +228,9 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
                     <SelectDropdown
                       label="Verticle"
                       options={verticles}
-                      value={entry.verticle}
+                      value={entry.verticles}
                       onChange={(e) =>
-                        handleRoleChange(index, "verticle", e.target.value)
+                        handleRoleChange(index, "verticles", e.target.value)
                       }
                     />
                     <SelectDropdown
@@ -261,7 +261,7 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
                   onClick={() =>
                     setRolesData([
                       ...rolesData,
-                      { verticle: "", category: "", role: "" },
+                      { verticles: "", category: "", role: "" },
                     ])
                   }
                   type="button"

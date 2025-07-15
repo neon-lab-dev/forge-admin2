@@ -65,7 +65,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   }, [token]);
 
   const [rolesData, setRolesData] = useState([
-    { verticle: "", category: "", role: "" },
+    { verticles: "", category: "", role: "" },
   ]);
 
   const handleRoleChange = (index: number, field: RoleField, value: string) => {
@@ -95,9 +95,15 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
 
       // Set default attributes
       if (user.attributes && user.attributes.length > 0) {
-        setRolesData(user.attributes);
+        setRolesData(
+          user.attributes.map((attr: any) => ({
+            verticles: attr.verticles || "",
+            category: attr.category || "",
+            role: attr.role || "",
+          }))
+        );
       } else {
-        setRolesData([{ verticle: "", category: "", role: "" }]);
+        setRolesData([{ verticles: "", category: "", role: "" }]);
       }
     }
   }, [user, setValue]);
@@ -244,9 +250,9 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
                     <SelectDropdown
                       label="Verticle"
                       options={verticles}
-                      value={entry.verticle}
+                      value={entry.verticles}
                       onChange={(e) =>
-                        handleRoleChange(index, "verticle", e.target.value)
+                        handleRoleChange(index, "verticles", e.target.value)
                       }
                     />
                     <SelectDropdown
@@ -277,7 +283,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
                   onClick={() =>
                     setRolesData([
                       ...rolesData,
-                      { verticle: "", category: "", role: "" },
+                      { verticles: "", category: "", role: "" },
                     ])
                   }
                   type="button"
