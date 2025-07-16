@@ -228,18 +228,21 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               placeholder="Enter your linkedIn profile url"
               {...register("linkedInUrl")}
               error={errors.linkedInUrl}
+              isRequired={false}
             />
             <TextInput
               label="Bio"
               placeholder="Enter your bio"
               {...register("writeUp")}
               error={errors.writeUp}
+              isRequired={false}
             />
             <TextInput
               label="Station"
               placeholder="Enter your station"
               {...register("station")}
               error={errors.station}
+              isRequired={false}
             />
 
             <div className="space-y-4">
