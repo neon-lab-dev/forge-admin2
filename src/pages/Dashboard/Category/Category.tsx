@@ -18,7 +18,7 @@ const Category = () => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          "https://admin-delta-rosy.vercel.app/api/category",
+          "https://forge-server-pearl.vercel.app/api/category",
           {
             headers: {
               Authorization: `Bearer ${token}`,
