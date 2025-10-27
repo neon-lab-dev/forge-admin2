@@ -114,7 +114,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
 
     try {
       await axios.put(
-        `https://admin-delta-rosy.vercel.app/api/people/${userId}`,
+        `https://forge-server-pearl.vercel.app/api/people/${userId}`,
         formData,
         {
           headers: {
