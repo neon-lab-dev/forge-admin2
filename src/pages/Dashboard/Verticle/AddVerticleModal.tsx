@@ -25,7 +25,7 @@ const AddVerticleModal: React.FC<AddVerticleModalProps> = ({ onClose }) => {
 
     try {
       await axios.post(
-        `https://admin-delta-rosy.vercel.app/api/verticles`,
+        `https://forge-server-pearl.vercel.app/api/verticles`,
         formData,
         {
           headers: {
