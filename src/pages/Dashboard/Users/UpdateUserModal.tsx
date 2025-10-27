@@ -34,7 +34,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
     const fetchData = async () => {
       try {
         const [categoryRes, verticleRes] = await Promise.all([
-          axios.get("https://admin-delta-rosy.vercel.app/api/category", {
+          axios.get("https://forge-server-pearl.vercel.app/api/category", {
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
           }),
