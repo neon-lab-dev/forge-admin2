@@ -29,7 +29,7 @@ const Users = () => {
 
     try {
       const res = await axios.get(
-        `https://admin-delta-rosy.vercel.app/api/people/${userId}`,
+        `https://forge-server-pearl.vercel.app/api/people/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -53,7 +53,7 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          "https://admin-delta-rosy.vercel.app/api/people",
+          "https://forge-server-pearl.vercel.app/api/people",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -77,7 +77,7 @@ const Users = () => {
 
     try {
       const res = await fetch(
-        `https://admin-delta-rosy.vercel.app/api/people/${userId}`,
+        `https://forge-server-pearl.vercel.app/api/people/${userId}`,
         {
           method: "DELETE",
           headers: {
