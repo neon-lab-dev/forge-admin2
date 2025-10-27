@@ -25,7 +25,7 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ onClose }) => {
 
     try {
       await axios.post(
-        `https://admin-delta-rosy.vercel.app/api/category`,
+        `https://forge-server-pearl.vercel.app/api/category`,
         formData,
         {
           headers: {
