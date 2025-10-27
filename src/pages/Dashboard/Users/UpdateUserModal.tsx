@@ -38,7 +38,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
           }),
-          axios.get("https://admin-delta-rosy.vercel.app/api/verticles", {
+          axios.get("https://forge-server-pearl.vercel.app/api/verticles", {
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
           }),
