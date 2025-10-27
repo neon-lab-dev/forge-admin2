@@ -18,7 +18,7 @@ const Verticle = () => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          "https://admin-delta-rosy.vercel.app/api/verticles",
+          "https://forge-server-pearl.vercel.app/api/verticles",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ const Verticle = () => {
 
     try {
       const res = await fetch(
-        `https://admin-delta-rosy.vercel.app/api/verticles/${id}`,
+        `https://forge-server-pearl.vercel.app/api/verticles/${id}`,
         {
           method: "DELETE",
           headers: {
