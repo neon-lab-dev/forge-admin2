@@ -6,6 +6,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import AddCategoryModal from "./AddCategoryModal";
 import { toast } from "sonner";
+import { backendBaseUrl } from "../../../backendUrl";
 
 const Category = () => {
   const token = Cookies.get("accessToken");
@@ -18,7 +19,7 @@ const Category = () => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          "https://forge-server-pearl.vercel.app/api/category",
+          `${backendBaseUrl}/api/category`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -43,7 +44,7 @@ const Category = () => {
 
     try {
       const res = await fetch(
-        `https://admin-delta-rosy.vercel.app/api/category/${id}`,
+        `${backendBaseUrl}/api/category/${id}`,
         {
           method: "DELETE",
           headers: {

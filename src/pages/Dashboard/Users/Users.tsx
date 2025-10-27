@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import Loader from "../../../components/Reusable/Loader/Loader";
 import axios from "axios";
 import AddPeopleModal from "./AddPeopleModal";
+import { backendBaseUrl } from "../../../backendUrl";
 
 const Users = () => {
   const { register, watch } = useForm({ defaultValues: { search: "" } });
@@ -29,7 +30,7 @@ const Users = () => {
 
     try {
       const res = await axios.get(
-        `https://forge-server-pearl.vercel.app/api/people/${userId}`,
+        `${backendBaseUrl}/api/people/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -53,7 +54,7 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          "https://forge-server-pearl.vercel.app/api/people",
+          `${backendBaseUrl}/api/people`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -77,7 +78,7 @@ const Users = () => {
 
     try {
       const res = await fetch(
-        `https://forge-server-pearl.vercel.app/api/people/${userId}`,
+        `${backendBaseUrl}/api/people/${userId}`,
         {
           method: "DELETE",
           headers: {
@@ -107,8 +108,6 @@ const Users = () => {
       user?.email?.toLowerCase().includes(term)
     );
   });
-
-  console.log(filteredUsers);
 
   const toggleDropdown = (id: string) =>
     setDropdownOpen((prev) => (prev === id ? null : id));

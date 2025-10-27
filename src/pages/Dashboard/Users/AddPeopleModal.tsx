@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import SelectDropdown from "../../../components/Reusable/SelectDropdown/SelectDropdown";
 import { TiDeleteOutline } from "react-icons/ti";
 import Loader from "../../../components/Reusable/Loader/Loader";
+import { backendBaseUrl } from "../../../backendUrl";
 
 interface AddPeopleModalProps {
   onClose: () => void;
@@ -46,11 +47,11 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
   const fetchData = async () => {
     try {
       const [categoryRes, verticleRes] = await Promise.all([
-        axios.get("https://admin-delta-rosy.vercel.app/api/category", {
+        axios.get(`${backendBaseUrl}/api/category`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         }),
-        axios.get("https://admin-delta-rosy.vercel.app/api/verticles", {
+        axios.get(`${backendBaseUrl}/api/verticles`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         }),
@@ -100,7 +101,7 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
     const toastId = toast.loading("Loading...");
     try {
       await axios.post(
-        `https://admin-delta-rosy.vercel.app/api/people`,
+        `${backendBaseUrl}/api/people`,
         formData,
         {
           headers: {
@@ -136,7 +137,7 @@ const AddPeopleModal: React.FC<AddPeopleModalProps> = ({ onClose }) => {
   };
 
   const handleDeleteRole = (index: number) => {
-    if (rolesData.length <= 1) return; // Prevent deleting the last item
+    if (rolesData.length <= 1) return;
 
     const updated = rolesData.filter((_, i) => i !== index);
     setRolesData(updated);

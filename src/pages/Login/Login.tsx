@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { backendBaseUrl } from "../../backendUrl";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -27,11 +28,10 @@ const Login = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "https://forge-server-pearl.vercel.app/api/auth/login",
+        `${backendBaseUrl}/api/auth/login`,
         data,
         { withCredentials: true }
       );
-      console.log(response);
       if (response?.data?.success) {
         Cookies.set("accessToken", response?.data?.data?.accessToken, {
           expires: 2,

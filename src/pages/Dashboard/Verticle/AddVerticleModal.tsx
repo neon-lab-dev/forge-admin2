@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { FiX } from "react-icons/fi";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
+import { backendBaseUrl } from "../../../backendUrl";
 
 interface AddVerticleModalProps {
   onClose: () => void;
@@ -19,13 +20,12 @@ const AddVerticleModal: React.FC<AddVerticleModalProps> = ({ onClose }) => {
   } = useForm<any>();
 
   const handAddCategory = async (formData: any) => {
-    console.log(formData);
     const toastId = toast.loading("Loading...");
     const token = Cookies.get("accessToken");
 
     try {
       await axios.post(
-        `https://forge-server-pearl.vercel.app/api/verticles`,
+        `${backendBaseUrl}/api/verticles`,
         formData,
         {
           headers: {

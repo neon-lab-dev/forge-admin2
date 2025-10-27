@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import SelectDropdown from "../../../components/Reusable/SelectDropdown/SelectDropdown";
 import { type RoleField } from "./AddPeopleModal";
 import { TiDeleteOutline } from "react-icons/ti";
+import { backendBaseUrl } from "../../../backendUrl";
 
 interface UpdateUserModalProps {
   userId: string;
@@ -34,11 +35,11 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
     const fetchData = async () => {
       try {
         const [categoryRes, verticleRes] = await Promise.all([
-          axios.get("https://forge-server-pearl.vercel.app/api/category", {
+          axios.get(`${backendBaseUrl}/api/category`, {
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
           }),
-          axios.get("https://forge-server-pearl.vercel.app/api/verticles", {
+          axios.get(`${backendBaseUrl}/api/verticles`, {
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
           }),
@@ -114,7 +115,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
 
     try {
       await axios.put(
-        `https://forge-server-pearl.vercel.app/api/people/${userId}`,
+        `${backendBaseUrl}/api/people/${userId}`,
         formData,
         {
           headers: {

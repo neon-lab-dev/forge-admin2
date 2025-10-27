@@ -6,6 +6,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 import AddVerticleModal from "./AddVerticleModal";
+import { backendBaseUrl } from "../../../backendUrl";
 
 const Verticle = () => {
   const token = Cookies.get("accessToken");
@@ -18,7 +19,7 @@ const Verticle = () => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          "https://forge-server-pearl.vercel.app/api/verticles",
+          `${backendBaseUrl}/api/verticles`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -43,7 +44,7 @@ const Verticle = () => {
 
     try {
       const res = await fetch(
-        `https://forge-server-pearl.vercel.app/api/verticles/${id}`,
+        `${backendBaseUrl}/api/verticles/${id}`,
         {
           method: "DELETE",
           headers: {
