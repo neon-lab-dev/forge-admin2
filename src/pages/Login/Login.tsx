@@ -27,7 +27,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "https://admin-delta-rosy.vercel.app/api/auth/login",
+        "https://forge-server-pearl.vercel.app/api/auth/login",
         data,
         { withCredentials: true }
       );
